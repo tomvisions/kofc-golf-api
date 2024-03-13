@@ -1,7 +1,7 @@
 version: 0.2
 env:
   secrets-manager:
-     DB_INFO: arn:aws:secretsmanager:us-east-1:955552760689:secret:DB_INFO_STAGE-4BHG61
+     DB_INFO: arn:aws:secretsmanager:us-east-1:992382682688:secret:DB_INFO_STAGE-hztnV7
 phases:
   install:
     commands:
