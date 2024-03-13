@@ -123,12 +123,31 @@ Resources:
                 - S3WritePolicy:
                       BucketName: !Ref BucketNameImages
 
+    MyApiRoute53RecordSetGroup:
+        Type: AWS::Route53::RecordSetGroup
+        Condition: UseDomainName
+        Properties:
+            HostedZoneName: !Sub ${ParentDomainName}.
+            RecordSets:
+                - Name: !Sub "${DomainName}."
+                  Type: A
+                  AliasTarget:
+                      EvaluateTargetHealth: true
+                      HostedZoneId: Z2FDTNDATAQYW2
+                      DNSName: !Sub ${Distribution.DomainName}.
+
+
     Distribution:
         Type: AWS::CloudFront::Distribution
         Properties:
             DistributionConfig:
                 Enabled: "true"
                 Comment: !Ref AWS::StackName
+                Aliases: 
+                    - !Ref DomainName
+                CNAMEs:
+                    - !Ref DomainName
+
                 HttpVersion: http2
                 Origins:
                   - DomainName: !Sub "${ExpressApi}.execute-api.${AWS::Region}.amazonaws.com"
