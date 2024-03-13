@@ -25,4 +25,5 @@ phases:
       - export DB_NAME=$(echo "$DB_INFO" | jq -r '.DB_NAME')
  #   TOKEN_SECRET: $TOKEN_SECRE
       - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
-      - npm run setup && rpm run deploy-production
+      - npm run setup 
+      - npm run deploy-production

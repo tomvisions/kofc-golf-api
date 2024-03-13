@@ -34,5 +34,6 @@ phases:
 
 
     #  - echo "$DB_INFO" | jq -r '.DB_HOST'
-      - npm run setup && rpm run deploy-stage
+      - npm run setup
+      - npm run deploy-stage
 
