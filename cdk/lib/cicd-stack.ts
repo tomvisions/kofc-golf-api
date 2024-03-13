@@ -30,13 +30,13 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 
 
 declare const codePipeline: codepipeline.Pipeline;
-const siteDomain = 'photography.tomvisions.com'
+
 const sourceArtifact = new codepipeline.Artifact('SourceArtifact');
 const buildArtifactStage = new codepipeline.Artifact("BuildArtifactStage");
 const buildArtifactProduction = new codepipeline.Artifact("BuildArtifactProduction");
 
 
-export class TomvisionsAPICICDCdkStack extends cdk.Stack {
+export class APICICDCdkStack extends cdk.Stack {
     declare myZone: route53.HostedZone;
 
 
@@ -51,27 +51,27 @@ export class TomvisionsAPICICDCdkStack extends cdk.Stack {
                 new CodeStarConnectionsSourceAction({
                     actionName: 'GitHub_Source',
                     owner: 'tomvisions',
-                    repo: 'tomvisions-api',
-                    connectionArn: 'arn:aws:codestar-connections:us-east-1:955552760689:connection/2ab40386-ec88-44e7-8e60-603bf85ddcd7',
+                    repo: 'kofc-golf-api',
+                    connectionArn: 'arn:aws:codestar-connections:us-east-1:992382682688:connection/5f7d02a2-2443-47e9-bd1d-378d49e2c12d',
                     output: sourceArtifact,
                     branch: 'main', // default: 'master',
                 }),
             ],
         };
 
-        const codeBuildRole = iam.Role.fromRoleArn(this, 'tomvisionsAPICodeBuildRole', cdk.Fn.importValue('TomvisionsCodeBuildRoleArn')); 
+//        const codeBuildRole = iam.Role.fromRoleArn(this, 'tomvisionsAPICodeBuildRole', cdk.Fn.importValue('TomvisionsCodeBuildRoleArn')); 
       
-        const policy = iam.Policy.fromPolicyName(this, 'testingPolicy','AmazonS3FullAccess');
+      //  const policy = iam.Policy.fromPolicyName(this, 'testingPolicy','AmazonS3FullAccess');
   //      console.log('policy');
     //    console.log(policy);
 //        codeBuildRole.addManagedPolicy(policy.);
 //          codeBuildRole.addManagedPolicy(policy);
 
 
-        const buildImageStage = new codebuild.Project(this, "TomvisionsAPIBuildStage", {
+        const buildImageStage = new codebuild.Project(this, "APIBuildStage", {
             buildSpec: codebuild.BuildSpec.fromSourceFilename("deployment/stage.yml"),
-            source: codebuild.Source.gitHub({ owner: 'tomvisions', repo: 'https://github.com/tomvisions/tomvisions-api' }),
-            role: codeBuildRole,
+            source: codebuild.Source.gitHub({ owner: 'tomvisions', repo: 'https://github.com/tomvisions/kofc-golf-api' }),
+  //          role: codeBuildRole,
             environment: {
                 buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
                 environmentVariables: {
@@ -83,10 +83,10 @@ export class TomvisionsAPICICDCdkStack extends cdk.Stack {
             },
         });
 
-        const buildImageProduction = new codebuild.Project(this, "TomvisionsAPIBuildProduction", {
+        const buildImageProduction = new codebuild.Project(this, "APIBuildProduction", {
             buildSpec: codebuild.BuildSpec.fromSourceFilename("deployment/production.yml"),
-            source: codebuild.Source.gitHub({ owner: 'tomvisions', repo: 'https://github.com/tomvisions/tomvisions-api' }),
-            role: codeBuildRole,
+            source: codebuild.Source.gitHub({ owner: 'tomvisions', repo: 'https://github.com/tomvisions/kofc-golf-api' }),
+        //    role: codeBuildRole,
             environment: {
                 buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
                 environmentVariables: {
@@ -158,17 +158,17 @@ export class TomvisionsAPICICDCdkStack extends cdk.Stack {
                 })]
         }
 
-        const pipelineGallery = new codepipeline.Pipeline(this, 'TomvisionsAPICICDCdkStack', {
-            pipelineName: 'tomvisions-api',
+        const pipelineGallery = new codepipeline.Pipeline(this, 'APICICDCdkStack', {
+            pipelineName: 'kofc-golf-api',
             stages: [sourceStage, buildStage, Approval, buildProduction],
-            artifactBucket: s3.Bucket.fromBucketArn(this, 'tomvisionsAPIBucketPipeline', cdk.Fn.importValue('TomvisionsBucketPipelineArn')),   
+         //   artifactBucket: s3.Bucket.fromBucketArn(this, 'APIBucketPipeline', cdk.Fn.importValue('TomvisionsBucketPipelineArn')),   
                      
         });
     }
 }
 
 const app = new cdk.App();
-new TomvisionsAPICICDCdkStack(app, 'TomvisionsAPICICDCdkStack', {
+new APICICDCdkStack(app, 'APICICDCdkStack', {
     stackName: "TomvisonsAPICICD",
 
 })
