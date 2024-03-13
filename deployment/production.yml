@@ -1,0 +1,28 @@
+version: 0.2
+env:
+  secrets-manager:
+     DB_INFO: arn:aws:secretsmanager:us-east-1:955552760689:secret:DB_INFO_PRODUCTION-D65Qpf
+phases:
+  install:
+    commands:
+      - git config --global credential.helper '!aws --region us-east-1 codecommit credential-helper $@'
+      - git config --global credential.UseHttpPath true
+  pre_build:
+    commands:
+      - npm install
+      - npm install -g cross-env
+      - npm install jq
+      - npm install --location=global cross-env cross-var-no-babel
+  build:
+    commands:
+      - echo "In the building process"
+      - echo $DB_INFO
+      - echo "the username"
+      - export DB_USERNAME=$(echo "$DB_INFO" | jq -r '.DB_USERNAME')
+      - echo $DB_USERNAME
+      - export DB_HOST=$(echo "$DB_INFO" | jq -r '.DB_HOST')
+      - export DB_PASSWORD=$(echo "$DB_INFO" | jq -r '.DB_PASSWORD')
+      - export DB_NAME=$(echo "$DB_INFO" | jq -r '.DB_NAME')
+ #   TOKEN_SECRET: $TOKEN_SECRE
+      - export NODE_ENV=$(echo "$DB_INFO" | jq -r '.NODE_ENV')
+      - npm run deploy-production

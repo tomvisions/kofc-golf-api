@@ -1,0 +1,12 @@
+node_modules
+dist
+.aws-sam
+.env
+.env-production
+.env*
+api-gateway-event.json
+boot.
+.history
+db-golf.json
+output.json
+generate-token.js
